@@ -10,5 +10,13 @@
 
     4. \i runsetup.sql 
 
+
+
+
+
+    FRÅGOR:
+
+    Fråga om det är ok att ha Default 'U' för 
+
 */
 

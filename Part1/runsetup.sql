@@ -44,13 +44,12 @@ SET client_min_messages TO NOTICE; -- More talk
 -- here (without creating a view) and when it works just add
 -- CREATE VIEW and put it in views.sql
 
-
 -- Tests various queries from the assignment,
 -- uncomment these as you make progress
 
--- SELECT idnr, name, login, program, branch
--- FROM BasicInformation
--- ORDER BY idnr;
+SELECT idnr, name, login, program, branch
+FROM BasicInformation
+ORDER BY idnr;
 
 -- SELECT student, course, courseName, grade, credits
 -- FROM FinishedCourses

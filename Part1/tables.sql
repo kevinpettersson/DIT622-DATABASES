@@ -38,7 +38,6 @@ CREATE TABLE Classifications (
     name TEXT PRIMARY KEY
 );
 
-
 CREATE TABLE Classified (
     code CHAR(6),
     classification TEXT,

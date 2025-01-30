@@ -40,5 +40,39 @@ SELECT
 FROM 
     Students AS s
 INNER JOIN WaitingList AS wl ON wl.student = s.idnr 
-INNER JOIN Courses     AS c  ON wl.course = c.code
+INNER JOIN Courses     AS c  ON wl.course = c.code;
+
+-- Helper Views --
+
+-- creates a subset of FinishedCourses but keeping only the ones with a grade other than U.
+CREATE VIEW PassedCourses AS
+SELECT * FROM FinishedCourses
+WHERE FinishedCourses.grade <> 'U';
+
+-- returns a view of (student, courses) that have mandatory courses not yet passed
+CREATE VIEW UnreadMandatory AS
+SELECT
+    s.idnr AS student, 
+    mp.course AS course
+FROM Students AS s
+JOIN MandatoryProgram AS mp ON s.program = mp.program
+WHERE mp.course NOT IN (
+    SELECT pc.course
+    FROM PassedCourses AS pc
+    WHERE pc.student = s.idnr
+)
+
+UNION
+
+SELECT
+    s.idnr AS student,
+    mb.course
+FROM Students AS s
+JOIN StudentBranches AS sb ON s.idnr = sb.student
+JOIN MandatoryBranch AS mb ON sb.branch = mb.branch AND sb.program = mb.program
+WHERE mb.course NOT IN (
+    SELECT pc.course
+    FROM PassedCourses AS pc
+    WHERE pc.student = s.idnr
+)
 

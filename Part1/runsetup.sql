@@ -64,17 +64,49 @@ ORDER BY status, course, student;
 -- FROM PathToGraduation
 -- ORDER BY student;
 
-
-
 -- Helper views for PathToGraduation (optional)
 
--- SELECT student, course, credits
--- FROM PassedCourses
--- ORDER BY (student, course);
+SELECT student, course, credits
+FROM PassedCourses
+ORDER BY student, course;
 
--- SELECT student, course
--- FROM UnreadMandatory
--- ORDER BY (student, course);
+SELECT student, course
+FROM UnreadMandatory
+ORDER BY student, course;
+
+-- CTE 
+WITH TotalCredits AS (
+    SELECT 
+        s.idnr AS student,
+        COALESCE(SUM(pc.credits), 0) AS totalcredits,
+    FROM Students AS s
+    LEFT JOIN PassedCourses AS pc ON s.idnr = pc.student 
+    GROUP BY s.idnr
+),
+MandatoryLeft AS (
+    SELECT 
+        s.idnr AS student,
+        COUNT(um.course) AS mandatoryleft,
+    FROM Students AS s
+    LEFT JOIN UnreadMandatory AS um ON s.idnr = um.student
+    GROUP BY s.idnr
+),
+IsQualified AS (
+    SELECT 
+        s.idnr AS student,
+        (COALESCE(SUM(pc.credits), 0) > 10) AS qualified
+    FROM Students AS s
+    LEFT JOIN PassedCourses AS pc ON s.idnr AS pc.student
+    GROUP BY s.idnr
+)
+SELECT 
+    tc.student,
+    tc.totalcredits,
+    ml.mandatoryleft,
+    iq.qualified
+FROM TotalCredits AS tc
+JOIN MandatoryLeft AS ml ON tc.student = ml.student
+JOIN IsQualified AS iq ON tc.student = iq.student;
 
 -- SELECT student, course, credits
 -- FROM RecommendedCourses

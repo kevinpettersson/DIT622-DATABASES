@@ -1,0 +1,2 @@
+-- This will likely be an exact copy of views.sql from part 1
+-- (unless you have changed names in the database)

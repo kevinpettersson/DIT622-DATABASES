@@ -1,0 +1,2 @@
+-- This will be based on inserts.sql from part 1,but extended
+-- with additional inserts required to work with your added/modified tables.

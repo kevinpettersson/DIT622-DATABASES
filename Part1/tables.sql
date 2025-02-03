@@ -39,11 +39,11 @@ CREATE TABLE Classifications (
 );
 
 CREATE TABLE Classified (
-    code CHAR(6),
+    course CHAR(6),
     classification TEXT,
-    FOREIGN KEY (code) REFERENCES Courses (code),
+    FOREIGN KEY (course) REFERENCES Courses (code),
     FOREIGN KEY (classification) REFERENCES Classifications (name),
-    PRIMARY KEY (code, classification)
+    PRIMARY KEY (c, classification)
 );
 
 CREATE TABLE MandatoryProgram (

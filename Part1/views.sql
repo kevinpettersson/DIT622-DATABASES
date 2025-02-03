@@ -111,7 +111,7 @@ MathAndSeminar AS (
         SUM(CASE WHEN c.classification = 'math' THEN pc.credits END) AS mathcredits,
         COUNT(CASE WHEN c.classification = 'seminar' THEN 1 END) AS seminarcourses
     FROM PassedCourses AS pc
-    LEFT JOIN Classified AS c ON pc.course = c.code
+    LEFT JOIN Classified AS c ON pc.course = c.course
     GROUP BY pc.student
 )
 SELECT 

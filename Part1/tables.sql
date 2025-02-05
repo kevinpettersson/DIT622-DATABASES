@@ -13,6 +13,8 @@ CREATE TABLE Branches (
     PRIMARY KEY (name, program)
 );
 
+
+-- feedback: todo, credits >= 0
 CREATE TABLE Courses (
     code CHAR(6) PRIMARY KEY,
     name TEXT NOT NULL,

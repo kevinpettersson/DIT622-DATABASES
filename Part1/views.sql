@@ -36,13 +36,10 @@ FROM Registered as r
 UNION
  
 SELECT 
-    s.idnr AS student,
-    c.code AS course,
+    wl.student,
+    wl.course,
     'waiting' AS status 
-FROM 
-    Students AS s
-JOIN WaitingList AS wl ON wl.student = s.idnr 
-JOIN Courses     AS c  ON wl.course = c.code;
+FROM WaitingList AS wl;
 
 -- creates a subset of FinishedCourses but keeping only the ones with a grade other than U.
 CREATE VIEW PassedCourses AS

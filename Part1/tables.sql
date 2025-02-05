@@ -43,7 +43,7 @@ CREATE TABLE Classified (
     classification TEXT,
     FOREIGN KEY (course) REFERENCES Courses (code),
     FOREIGN KEY (classification) REFERENCES Classifications (name),
-    PRIMARY KEY (c, classification)
+    PRIMARY KEY (course, classification)
 );
 
 CREATE TABLE MandatoryProgram (

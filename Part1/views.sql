@@ -27,14 +27,11 @@ JOIN Courses AS c ON c.code = t.course;
 -- feedback, take * from registered ksk?
 -- Registrations
 CREATE VIEW Registrations AS
-SELECT 
-    s.idnr AS student,
-    c.code AS course,
+SELECT
+    r.student,
+    r.course,
     'registered' AS status
-FROM 
-    Students AS s
-JOIN Registered AS r ON r.student = s.idnr 
-JOIN Courses AS c ON r.course = c.code
+FROM Registered as r
 
 UNION
  

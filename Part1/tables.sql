@@ -14,11 +14,11 @@ CREATE TABLE Branches (
 );
 
 
--- feedback: todo, credits >= 0
 CREATE TABLE Courses (
     code CHAR(6) PRIMARY KEY,
     name TEXT NOT NULL,
     credits FLOAT NOT NULL,
+    CONSTRAINT credits_nonnegative check (credits >=0),
     department TEXT NOT NULL
 );
 

@@ -23,6 +23,8 @@ FROM Students AS s
 JOIN Taken AS t ON s.idnr = t.student
 JOIN Courses AS c ON c.code = t.course;
 
+
+-- feedback, take * from registered ksk?
 -- Registrations
 CREATE VIEW Registrations AS
 SELECT 

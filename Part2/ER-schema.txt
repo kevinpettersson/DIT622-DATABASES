@@ -6,5 +6,32 @@
 -- IMPORTANT: This file should be a translation of your diagram
 -- without any additions (no additional constraints etc)!
 
+Students(_idnr_, name, login, branch)
+  branch → Branches.name
+
+Branches(_name_, program)
+  program → Programs.name
+
+StudentBranches(_student_, branch)
+  student → Students.idnr
+  branch → Branches.name
+
+Programs(_name_, abbr)
+
+Departments(_name_, abbr)
+
+Courses(_code_, name, credits, department) 
+  department → Departments.name
+
+StudentPrograms(_student_, _program_)
+  student → Students.idnr
+  program → Programs.name
+
 LimitedCourses(_code_, capacity)
   code → Courses.code
+
+WaitingList(_student_, _course_, position)
+  student → Students.idnr
+  course → LimitedCourses.course
+
+

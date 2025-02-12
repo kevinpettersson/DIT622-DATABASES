@@ -6,29 +6,69 @@
 -- IMPORTANT: This file should be a translation of your diagram
 -- without any additions (no additional constraints etc)!
 
-Students(_idnr_, name, login, branch)
-  branch → Branches.name
+SAKER ATT FRÅGA OM:
+fråga om er-diagrammet ser schysst ut, om inte vad är fel 
+fråga annars om schemat ser bra ut om inte va där fel
+Är Prerequisites korrekt definerad?
+ska vi ha ett table för ProgramDepartments (ProgramHost)
+Mandatorybranch,MandatoryProgram,RecommendedBranch ser bra ut? har tagit bort massa dependencies
+Ska både name och program i Branches vara key?
+Ska abbr i Programs vara key också?
 
-Branches(_name_, program)
+Programs(_name_, abbr)
+
+Students(_idnr_, name, login, branch, program)
+  branch → Branches.name
+  program → Programs.name
+
+Taken(_student_, _course_, grade)
+  student → Students.idnr
+  course → Courses.code
+
+Registrered(_student_, _course_)
+  student → Students.idnr
+  course → Courses.code
+
+Branches(_name_, _program_)
   program → Programs.name
 
 StudentBranches(_student_, branch)
   student → Students.idnr
   branch → Branches.name
 
-Programs(_name_, abbr)
-
 Departments(_name_, abbr)
+
+ProgramHosts(_program_, _department_)
+  program → Programs.name
+  department → Department.name
 
 Courses(_code_, name, credits, department) 
   department → Departments.name
 
-StudentPrograms(_student_, _program_)
-  student → Students.idnr
-  program → Programs.name
+Prerequisites(_course_, prerequisiteCourse)
+  course → Courses.code
+  prerequisite → Courses.code
 
 LimitedCourses(_code_, capacity)
   code → Courses.code
+
+MandatoryProgram(_course_, _program_)
+  course → Courses.name
+  program → Programs.name
+
+MandatoryBranch(_course_, _branch_)
+  course → Courses.name
+  branch → Branches.name
+
+RecommendedBranch(_course_, _branch_)
+  course → Courses.name
+  branch → Branches.name
+
+Classifications(_name_)
+
+Classified(_course_, _classification_)
+  course → Courses.code
+  classification → Classification.name
 
 WaitingList(_student_, _course_, position)
   student → Students.idnr

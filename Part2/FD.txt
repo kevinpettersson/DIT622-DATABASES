@@ -8,22 +8,80 @@ D(studentIdnr, studentName, login, branchName, programName, programAbbreviation,
 
 # REMOVE THIS LINE AND REPLACE IT WITH FDS ON THE FORM: a b -> c
 
-studentIdnr -> studentName, login, programName, branchName
+studentIdnr -> studentName, branchName, programName, login
 
-branchName -> programName
+login -> studentIdnr
 
-programName -> programAbbreviation
+programName -> programAbbreviation 
 
-courseCode -> courseName, credits, departmentName, classification, capacity, credits
+courseCode -> courseName, capacity, credits, departmentName
 
 departmentName -> departmentAbbreviation
+departmentAbbreviation -> departmentName
 
 studentIdnr, courseCode -> grade, position
+
+courseCode, position -> studentIdnr
 
 -- b) BCNF schema --
 
 # REMOVE THESE LINES AND REPLACE IT WITH A SCHEMA IN BCNF
 # (use _underscore_ to mark keys, like in the ER-schema)
+
+ROUND 1:
+X = {studentIdnr}
+FD = studentIdnr -> studentName, login, programName, branchName - BCNF VIOLATION
+
+X+ = R2 = {studentIdnr, studentName, login, programName, branchName, programAbbreviation}
+
+R1 - R2 = R3{studentIdnr, courseCode, courseName, credits, departmentName, departmentAbbreviation, capacity, grade, position}
+
+ROUND 2:
+FD = programName -> programAbbreviation - BCNF VIOLATION
+R4 = {programName, programAbbreviation}
+
+R2 - R4 = R5{studentIdnr, studentName, login, programName, branchName}
+
+ROUND 3: 
+FD = course -> courseName, credits, capacity, departmentAbbreviation - BCNF VIOLATION
+R6 = {courseCode, courseName, credits, capacity, departmentAbbreviation, departmentName}
+
+R3 - R6 = R7{studentIdnr, courseCode, grade, position}
+
+ROUND 4:
+R4 = {programName, programAbbreviation} is in BCNF
+
+ROUND 5:
+R5 = {studentIdnr, studentName, login, programName, branchName} is in BCNF
+
+R7 = {studentIdnr, courseCode, grade, position} is in BCNF
+
+ROUND 6:
+FD departmentAbbreviation -> departmentName - BCNF VIOLATION
+R8 = {departmentAbbreviation, departmentName}
+R6 - R8 = R9{courseCode,departmentAbbreviation,courseName,credits,capacity}
+
+FD courseCode -> classification
+R10 = {courseCode, classification}
+
+SCHEMA:
+
+R4 - Programs(programName, programAbbreviation)
+
+R5 - Students(studentIdnr, studentName, login, programName, branchName)
+    programName -> Programs.programName
+
+R7 - Enrollment(studentIdnr, courseCode, grade, position)
+    studentIdnr -> Students.studentIdnr
+    courseCode -> Courses.courseCode
+
+R8 - Departments(departmentAbbreviation, departmentName)
+
+R9 - Courses(courseCode, departmentAbbreviation, courseName, credits, capacity)
+    departmentAbbreviation -> Departments.departmentAbbreviation
+
+R10 - CourseClassifications(courseCode, classification)
+    courseCode -> Courses.courseCode
 
 -- c) 4NF additions --
 

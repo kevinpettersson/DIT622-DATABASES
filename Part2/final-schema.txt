@@ -1,3 +1,64 @@
 -- This file will have your final schema. It should be based on ER-schema
 -- but extended with unique constraints and an additional fix. 
 
+Programs(_name_, abbr) -- abbr not unique OK
+
+Students(_idnr_, name, login, branch, program) - OK
+  branch → Branches.name
+  program → Programs.name
+  UNIQUE(login)
+  FOREIGN KEY (branch,program) References Branches(name, program)
+
+Taken(_student_, _course_, grade) - OK
+  student → Students.idnr
+  course → Courses.code
+
+Registrered(_student_, _course_) - OK
+  student → Students.idnr
+  course → Courses.code
+
+Branches(_name_, _program_) - OK
+  program → Programs.name
+
+StudentBranches(_student_, branch) - OK
+  student → Students.idnr
+  branch → Branches.name
+
+Departments(_name_, _abbr_) - OK
+
+ProgramHosts(_program_, _department_) - OK
+  program → Programs.name
+  department → Department.name
+
+Courses(_code_, name, credits, department) - OK
+  department → Departments.name
+
+Prerequisites(_course_, prerequisiteCourse) - OK
+  course → Courses.code
+  prerequisite → Courses.code
+
+LimitedCourses(_code_, capacity) - OK
+  code → Courses.code
+
+MandatoryProgram(_course_, _program_) - OK
+  course → Courses.name
+  program → Programs.name
+
+MandatoryBranch(_course_, _branch_) - OK
+  course → Courses.name
+  branch → Branches.name
+
+RecommendedBranch(_course_, _branch_) - OK
+  course → Courses.name
+  branch → Branches.name
+
+Classifications(_name_) - OK
+
+Classified(_course_, _classification_) - OK
+  course → Courses.code
+  classification → Classification.name
+
+WaitingList(_student_, _course_, position) - OK
+  student → Students.idnr
+  course → LimitedCourses.code
+  UNIQUE(course, position)

@@ -13,7 +13,6 @@ CREATE TABLE Branches (
     PRIMARY KEY (name, program)
 );
 
-
 CREATE TABLE Courses (
     code CHAR(6) PRIMARY KEY,
     name TEXT NOT NULL,

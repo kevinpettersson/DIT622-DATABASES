@@ -80,13 +80,26 @@ R8 - Departments(departmentAbbreviation, departmentName)
 R9 - Courses(courseCode, departmentAbbreviation, courseName, credits, capacity)
     departmentAbbreviation -> Departments.departmentAbbreviation
 
-R10 - CourseClassifications(courseCode, classification)
+R10 - CourseClassifications(studentIdnr, courseCode, classification)
     courseCode -> Courses.courseCode
 
 -- c) 4NF additions --
 
 MVD identified: #PUT YOUR MVD HERE ON THE FORM a b ->> c d
+S = {studentIdnr, courseCode, classification}
+X = {courseCode}
+Y = {classification}
+
+courseCode ->> classification
+
+R(courseCode, classification,studentIdnr) 4NF VIOLATION
+R1 = X ∪ Y = {courseCode, classification}
+R2 = S − Y = {courseCode, studentIdnr}
 
 # REMOVE THESE LINES AND REPLACE IT WITH CHANGES MADE TO THE SCHEMA
 # FROM b) AFTER 4NF NORMALIZATION (what relations are removed/added)
 
+R10 - CourseClassifications(courseCode, classification)
+    courseCode -> Courses.courseCode
+
+Removed studentIdnr from CourseClassifications

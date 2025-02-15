@@ -33,7 +33,7 @@ ProgramHosts(_program_, _department_)
 Courses(_code_, name, credits, department)
   department → Departments.name
 
-Prerequisites(_course_, prerequisite)
+Prerequisites(_course_, _prerequisite_)
   course → Courses.code
   prerequisite → Courses.code
 

@@ -13,7 +13,6 @@ INSERT INTO ProgramsHosts VALUES ('Prog1', 'Dep1');
 INSERT INTO ProgramsHosts VALUES ('Prog1', 'Dep2'); -- both dep1 and dep2 collaborate on prog1
 INSERT INTO ProgramsHosts VALUES ('Prog3', 'Dep3');
 
-
 INSERT INTO Students VALUES ('1111111111','N1','ls1','Prog1');
 INSERT INTO Students VALUES ('2222222222','N2','ls2','Prog1');
 INSERT INTO Students VALUES ('3333333333','N3','ls3','Prog2');
@@ -32,6 +31,8 @@ INSERT INTO Courses VALUES ('CCC444','C4',60,'Dep1');
 INSERT INTO Courses VALUES ('CCC555','C5',50,'Dep1');
 INSERT INTO Courses VALUES ('CCC666','C6',20,'Dep2');
 
+INSERT INTO Prerequisites VALUES ('CCC444', 'CCC111');
+INSERT INTO Prerequisites VALUES ('CCC444', 'CCC222');
 
 INSERT INTO LimitedCourses VALUES ('CCC222',1);
 INSERT INTO LimitedCourses VALUES ('CCC333',2);

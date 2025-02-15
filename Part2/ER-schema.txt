@@ -6,15 +6,6 @@
 -- IMPORTANT: This file should be a translation of your diagram
 -- without any additions (no additional constraints etc)!
 
-SAKER ATT FRÅGA OM:
-fråga om er-diagrammet ser schysst ut, om inte vad är fel 
-fråga annars om schemat ser bra ut om inte va där fel
-Är Prerequisites korrekt definerad?
-ska vi ha ett table för ProgramDepartments (ProgramHost)
-Mandatorybranch,MandatoryProgram,RecommendedBranch ser bra ut? har tagit bort massa dependencies
-Ska både name och program i Branches vara key?
-Ska abbr i Programs vara key också?
-
 Programs(_name_, abbr)
 
 Students(_idnr_, name, login, branch, program)

@@ -1,64 +1,64 @@
 -- This file will have your final schema. It should be based on ER-schema
 -- but extended with unique constraints and an additional fix. 
 
-Programs(_name_, abbr) -- abbr not unique OK
+Programs(_name_, abbr)
 
-Students(_idnr_, name, login, branch, program) - OK
-  branch → Branches.name
+Students(_idnr_, name, login, branch, program) 
   program → Programs.name
+  (branch, program) → (Branches.name, Branches.Program)
   UNIQUE(login)
-  FOREIGN KEY (branch,program) References Branches(name, program)
 
-Taken(_student_, _course_, grade) - OK
+Taken(_student_, _course_, grade) 
   student → Students.idnr
   course → Courses.code
 
-Registrered(_student_, _course_) - OK
+Registrered(_student_, _course_)
   student → Students.idnr
   course → Courses.code
 
-Branches(_name_, _program_) - OK
+Branches(_name_, _program_) 
   program → Programs.name
 
-StudentBranches(_student_, branch) - OK
+StudentBranches(_student_, branch, program) 
   student → Students.idnr
-  branch → Branches.name
+  (branch, program) → (Branches.name, Branches.Program)
 
-Departments(_name_, _abbr_) - OK
+Departments(_name_, abbr)
+UNIQUE(abbr)
 
-ProgramHosts(_program_, _department_) - OK
+ProgramHosts(_program_, _department_) 
   program → Programs.name
   department → Department.name
 
-Courses(_code_, name, credits, department) - OK
+Courses(_code_, name, credits, department)
   department → Departments.name
 
-Prerequisites(_course_, prerequisiteCourse) - OK
+Prerequisites(_course_, prerequisite)
   course → Courses.code
   prerequisite → Courses.code
 
-LimitedCourses(_code_, capacity) - OK
+LimitedCourses(_code_, capacity) 
   code → Courses.code
 
-MandatoryProgram(_course_, _program_) - OK
+MandatoryProgram(_course_, _program_)
   course → Courses.name
   program → Programs.name
 
-MandatoryBranch(_course_, _branch_) - OK
+MandatoryBranch(_course_, _branch_, program)
   course → Courses.name
-  branch → Branches.name
+  (branch, program) → (Branches.name, Branches.Program)
 
-RecommendedBranch(_course_, _branch_) - OK
+RecommendedBranch(_course_, _branch_, program)
   course → Courses.name
-  branch → Branches.name
+  (branch, program) → (Branches.name, Branches.Program)
 
-Classifications(_name_) - OK
+Classifications(_name_) 
 
-Classified(_course_, _classification_) - OK
+Classified(_course_, _classification_) 
   course → Courses.code
   classification → Classification.name
 
-WaitingList(_student_, _course_, position) - OK
+WaitingList(_student_, _course_, position) 
   student → Students.idnr
   course → LimitedCourses.code
   UNIQUE(course, position)

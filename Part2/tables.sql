@@ -4,7 +4,8 @@
 
 CREATE TABLE Departments (
     name TEXT PRIMARY KEY,
-    abbr TEXT UNIQUE NOT NULL
+    abbr TEXT NOT NULL,
+    UNIQUE (abbr)
 );
 
 CREATE TABLE Programs (
@@ -30,10 +31,12 @@ CREATE TABLE Branches (
 CREATE TABLE Students (
     idnr CHAR(10) PRIMARY KEY,
     name TEXT NOT NULL,
-    login TEXT UNIQUE NOT NULL,
+    login TEXT NOT NULL,
     program TEXT NOT NULL,
-    FOREIGN KEY (program) REFERENCES Programs (name)
-    --FOREIGN KEY (program) REFERENCES Programs (name)
+    branch TEXT,
+    FOREIGN KEY (program) REFERENCES Programs (name), -- ensures program exists in program table
+    FOREIGN KEY (branch, program) REFERENCES Branches (name, program), -- ensures the (branch,program)-pair exists in the branches table. thus a student can't chose a branch not part of a program.
+    UNIQUE (login)
 );
 
 CREATE TABLE StudentBranches (
@@ -42,7 +45,6 @@ CREATE TABLE StudentBranches (
     program TEXT NOT NULL,
     FOREIGN KEY (student) REFERENCES Students (idnr),
     FOREIGN KEY (branch, program) REFERENCES Branches (name, program)
-    --FOREIGN KEY (program) REFERENCES Programs (name)
 );
 
 CREATE TABLE Courses (
@@ -91,7 +93,7 @@ CREATE TABLE MandatoryProgram (
 CREATE TABLE MandatoryBranch (
     course CHAR(6),
     branch TEXT,
-    program TEXT,
+    program TEXT NOT NULL,
     FOREIGN KEY (course) REFERENCES Courses (code),
     FOREIGN KEY (branch, program) REFERENCES Branches (name, program),
     PRIMARY KEY (course, branch)
@@ -100,7 +102,7 @@ CREATE TABLE MandatoryBranch (
 CREATE TABLE RecommendedBranch (
     course CHAR(6),
     branch TEXT,
-    program TEXT,
+    program TEXT NOT NULL,
     FOREIGN KEY (course) REFERENCES Courses (code),
     FOREIGN KEY (branch, program) REFERENCES Branches (name, program),
     PRIMARY KEY (course, branch)
@@ -130,6 +132,6 @@ CREATE TABLE WaitingList(
     position INT NOT NULL CHECK (position > 0),
     FOREIGN KEY (student) REFERENCES Students (idnr),
     FOREIGN KEY (course) REFERENCES LimitedCourses (code),
-    UNIQUE(course, position),
-    PRIMARY KEY (student, course)
+    PRIMARY KEY (student, course),
+    UNIQUE(course, position)
 );

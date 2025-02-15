@@ -2,11 +2,17 @@
 -- with additional inserts required to work with your added/modified tables.
 
 INSERT INTO Programs VALUES ('Prog1','p1');
-INSERT INTO Programs VALUES ('Prog2','p2');
+INSERT INTO Programs VALUES ('Prog2','p1'); -- prog1 and prog2 has the same abbrevation
+INSERT INTO Programs VALUES ('Prog3','p3');
 
 INSERT INTO Departments VALUES ('Dep1','d1');
+INSERT INTO Departments VALUES ('Dep2','d2');
+INSERT INTO Departments VALUES ('Dep3','d3');
 
 INSERT INTO ProgramsHosts VALUES ('Prog1', 'Dep1');
+INSERT INTO ProgramsHosts VALUES ('Prog1', 'Dep2'); -- both dep1 and dep2 collaborate on prog1
+INSERT INTO ProgramsHosts VALUES ('Prog3', 'Dep3');
+
 
 INSERT INTO Students VALUES ('1111111111','N1','ls1','Prog1');
 INSERT INTO Students VALUES ('2222222222','N2','ls2','Prog1');
@@ -24,6 +30,8 @@ INSERT INTO Courses VALUES ('CCC222','C2',20,'Dep1');
 INSERT INTO Courses VALUES ('CCC333','C3',30,'Dep1');
 INSERT INTO Courses VALUES ('CCC444','C4',60,'Dep1');
 INSERT INTO Courses VALUES ('CCC555','C5',50,'Dep1');
+INSERT INTO Courses VALUES ('CCC666','C6',20,'Dep2');
+
 
 INSERT INTO LimitedCourses VALUES ('CCC222',1);
 INSERT INTO LimitedCourses VALUES ('CCC333',2);

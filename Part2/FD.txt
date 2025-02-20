@@ -43,8 +43,8 @@ R4 = {programName, programAbbreviation}
 R2 - R4 = R5{studentIdnr, studentName, login, programName, branchName}
 
 ROUND 3: 
-FD = course -> courseName, credits, capacity, departmentAbbreviation - BCNF VIOLATION
-R6 = {courseCode, courseName, credits, capacity, departmentAbbreviation, departmentName}
+FD = course -> courseName, credits, capacity, classification, departmentAbbreviation - BCNF VIOLATION
+R6 = {courseCode, courseName, credits, capacity, classification, departmentAbbreviation, departmentName}
 
 R3 - R6 = R7{studentIdnr, courseCode, grade, position}
 
@@ -59,7 +59,7 @@ R7 = {studentIdnr, courseCode, grade, position} is in BCNF
 ROUND 6:
 FD departmentAbbreviation -> departmentName - BCNF VIOLATION
 R8 = {departmentAbbreviation, departmentName}
-R6 - R8 = R9{courseCode,departmentAbbreviation,courseName,credits,capacity}
+R6 - R8 = R9{courseCode,departmentAbbreviation,courseName,credits,capacity, classification}
 
 SCHEMA:
 
@@ -74,26 +74,23 @@ R7 - Enrollment(studentIdnr, courseCode, grade, position)
 
 R8 - Departments(departmentAbbreviation, departmentName)
 
-R9 - Courses(courseCode, departmentAbbreviation, courseName, credits, capacity)
+R9 - Courses(courseCode, departmentAbbreviation, courseName, credits, capacity, classification)
     departmentAbbreviation -> Departments.departmentAbbreviation
 
 -- c) 4NF additions --
 
 MVD identified: #PUT YOUR MVD HERE ON THE FORM a b ->> c d
-S = {courseCode, classification}
-X = {courseCode}
-Y = {classification}
 
 courseCode ->> classification
 
-R(courseCode, classification) 4NF VIOLATION
-R1 = X ∪ Y = {courseCode, classification}
-R2 = S − Y = {courseCode} -- NO MEANINGFUL RELATION IGNORE THIS
-
-# REMOVE THESE LINES AND REPLACE IT WITH CHANGES MADE TO THE SCHEMA
-# FROM b) AFTER 4NF NORMALIZATION (what relations are removed/added)
-
-Added: 
+ADDED: 
 R10 - CourseClassifications(courseCode, classification)
     courseCode -> Courses.courseCode
+
+R11 - Courses(courseCode, departmentAbbreviation, courseName, credits, capacity)
+    departmentAbbreviation -> Departments.departmentAbbreviation
+
+REMOVED:
+R9 - Courses(courseCode, departmentAbbreviation, courseName, credits, capacity, classification)
+    departmentAbbreviation -> Departments.departmentAbbreviation
 

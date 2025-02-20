@@ -1,5 +1,8 @@
 -- This should be your trigger file for part 3
 
+
+-- YOU NEED TO WRITE THE TRIGGERS ON THE VIEW REGISTRATIONS INSTEAD OF ON THE TABLES THEMSELVES
+
 /*
 A study administrator can override both course prerequisite requirements and size restrictions
 and add a student directly as registered to a course.
@@ -17,10 +20,6 @@ else
 */
 
 -- REGISTER TRIGGER
-/* 
-RAISE EXCEPTION 'Nonexistent ID --> %', user_id
-      USING HINT = 'Please check your user ID'; 
-*/
 do $$
 BEGIN
   raise notice 'Hello World!';
@@ -30,4 +29,15 @@ $$;
 
 
 
+/*
+if (waitinglist.contains(student))
+       delete;
+       updatewaitinglist?;
+       return;
+       
+       else
+       if(registered)
+       delete
+       tryTo register firstIn waitinglist
+*/
 -- UNREGISTER TRIGGER

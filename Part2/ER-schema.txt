@@ -23,9 +23,9 @@ Registrered(_student_, _course_)
 Branches(_name_, _program_)
   program → Programs.name
 
-StudentBranches(_student_, branch)
+StudentBranches(_student_, branch, program)
   student → Students.idnr
-  branch → Branches.name
+  (branch, program) → (Branches.name, Branches.program)
 
 Departments(_name_, abbr)
 
@@ -36,7 +36,7 @@ ProgramHosts(_program_, _department_)
 Courses(_code_, name, credits, department) 
   department → Departments.name
 
-Prerequisites(_course_, prerequisiteCourse)
+Prerequisites(_course_, _prerequisite_)
   course → Courses.code
   prerequisite → Courses.code
 
@@ -47,13 +47,13 @@ MandatoryProgram(_course_, _program_)
   course → Courses.name
   program → Programs.name
 
-MandatoryBranch(_course_, _branch_)
+MandatoryBranch(_course_, _branch_, program)
   course → Courses.name
-  branch → Branches.name
+  (branch, program) → (Branches.name, Branches.program)
 
-RecommendedBranch(_course_, _branch_)
+RecommendedBranch(_course_, _branch_, program)
   course → Courses.name
-  branch → Branches.name
+  (branch, program) → (Branches.name, Branches.program)
 
 Classifications(_name_)
 

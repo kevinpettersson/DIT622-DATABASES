@@ -44,6 +44,7 @@ CREATE TABLE StudentBranches (
     branch TEXT NOT NULL,
     program TEXT NOT NULL,
     FOREIGN KEY (student) REFERENCES Students (idnr),
+    FOREIGN KEY (program) REFERENCES Programs (name),
     FOREIGN KEY (branch, program) REFERENCES Branches (name, program)
 );
 

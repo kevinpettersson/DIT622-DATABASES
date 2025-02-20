@@ -21,7 +21,8 @@ Branches(_name_, _program_)
 
 StudentBranches(_student_, branch, program) 
   student → Students.idnr
-  (branch, program) → (Branches.name, Branches.Program)
+  program -> Programs.name
+  (branch, program) → (Branches.name, Branches.program)
 
 Departments(_name_, abbr)
 UNIQUE(abbr)

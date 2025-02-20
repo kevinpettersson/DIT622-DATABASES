@@ -33,19 +33,18 @@ CREATE TABLE Students (
     name TEXT NOT NULL,
     login TEXT NOT NULL,
     program TEXT NOT NULL,
-    branch TEXT,
-    FOREIGN KEY (program) REFERENCES Programs (name), -- ensures program exists in program table
-    FOREIGN KEY (branch, program) REFERENCES Branches (name, program), -- ensures the (branch,program)-pair exists in the branches table. thus a student can't chose a branch not part of a program.
+    FOREIGN KEY (program) REFERENCES Programs (name),
     UNIQUE (login)
 );
 
 CREATE TABLE StudentBranches (
-    student CHAR(10) PRIMARY KEY,
-    branch TEXT NOT NULL,
-    program TEXT NOT NULL,
+    student CHAR(10),
+    branch TEXT,
+    program TEXT,
     FOREIGN KEY (student) REFERENCES Students (idnr),
     FOREIGN KEY (program) REFERENCES Programs (name),
-    FOREIGN KEY (branch, program) REFERENCES Branches (name, program)
+    FOREIGN KEY (branch, program) REFERENCES Branches (name, program),
+    PRIMARY KEY (student, branch, program)
 );
 
 CREATE TABLE Courses (
@@ -95,19 +94,19 @@ CREATE TABLE MandatoryProgram (
 CREATE TABLE MandatoryBranch (
     course CHAR(6),
     branch TEXT,
-    program TEXT NOT NULL,
+    program TEXT,
     FOREIGN KEY (course) REFERENCES Courses (code),
     FOREIGN KEY (branch, program) REFERENCES Branches (name, program),
-    PRIMARY KEY (course, branch)
+    PRIMARY KEY (course, branch, program)
 );
 
 CREATE TABLE RecommendedBranch (
     course CHAR(6),
     branch TEXT,
-    program TEXT NOT NULL,
+    program TEXT,
     FOREIGN KEY (course) REFERENCES Courses (code),
     FOREIGN KEY (branch, program) REFERENCES Branches (name, program),
-    PRIMARY KEY (course, branch)
+    PRIMARY KEY (course, branch, program)
 );
 
 CREATE TABLE Registered (

@@ -24,20 +24,23 @@ FROM Students AS s
 JOIN Taken AS t ON s.idnr = t.student
 JOIN Courses AS c ON c.code = t.course;
 
--- Registrations(student, course, status): for all students, their registered courses,
--- along with the status of the registration ('registered' or 'waiting').
+
+-- feedback, take * from registered ksk?
+-- Registrations
 CREATE VIEW Registrations AS
-SELECT *,
+SELECT
+    r.student,
+    r.course,
     'registered' AS status
-FROM Registered
+FROM Registered as r
 
 UNION
  
 SELECT 
-    student,
-    course,
+    wl.student,
+    wl.course,
     'waiting' AS status 
-FROM WaitingList;
+FROM WaitingList AS wl;
 
 -- creates a subset of FinishedCourses but keeping only the ones with a grade other than U.
 CREATE VIEW PassedCourses AS

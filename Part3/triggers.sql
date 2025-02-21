@@ -1,49 +1,55 @@
 -- This should be your trigger file for part 3
 
+CREATE FUNCTION register() RETURNS trigger AS $$
+    DECLARE
+        course_capacity INT;
+        course_registrations INT;
+        waiting_position INT;
 
--- YOU NEED TO WRITE THE TRIGGERS ON THE VIEW REGISTRATIONS INSTEAD OF ON THE TABLES THEMSELVES
+    BEGIN
+        -- Check that student and course are given
+        IF NEW.student IS NULL THEN
+            RAISE EXCEPTION 'studentr cannot be null';
+        END IF;
+        IF NEW.course IS NULL THEN
+            RAISE EXCEPTION 'course cannot be null';
+        END IF;
 
-/*
-A study administrator can override both course prerequisite requirements and size restrictions
-and add a student directly as registered to a course.
+        -- Check if student already waiting/registrered for the course.
+        IF EXISTS (
+            SELECT 1 
+            FROM Registrations AS r
+            WHERE r.course = NEW.course AND r.student = NEW.student 
+        )
+        THEN RAISE EXCEPTION '% Is already waiting or registrered for the course.', NEW.student;
+        END IF;
 
-Student need all prereqCourses, not already read course, not registered already to register.
-If course full, add to waitinglist in FIFO order.
+        -- Get the course capacity, dummy value if not found.
+        SELECT COALESCE(lc.capacity, -1) INTO course_capacity 
+        FROM LimitedCourses AS lc
+        WHERE lc.code = NEW.course;
 
--- psuedologic according to domain desc.
-if (sAdmin) {register.()}
-else
- if (passedPrereq && notReadAlready && notRegisteredAlready)
- return appropriateError
-      if (waitinglist.empty && courseNotFull) {register.()}
-      else {waitinglist.add()}
-*/
+        -- Get the next position in queue
+        SELECT COALESCE(MAX(position), 0) + 1 INTO waiting_position
+        FROM WaitingList AS wl 
+        WHERE wl.course = NEW.course;
 
-CREATE FUNCTION insertInRegistrations()
-RETURNS TRIGGER AS $$
-BEGIN
-    RAISE EXCEPTION 'Unable to register sID % -> course %', NEW.student, NEW.course
-        USING HINT = 'Registration failed';
-END;
+        -- Get number of currently registered students, dummy value if not found.
+        SELECT COALESCE(COUNT(r.student), 0) INTO course_registrations
+        FROM Registered AS r
+        WHERE r.course = NEW.course;
+
+        -- If capacity wasn't null and is less than registrated then insert into WL otherwise R. 
+        IF course_capacity > 0 AND course_registrations >= course_capacity THEN
+            INSERT INTO WaitingList VALUES (NEW.student, NEW.course, waiting_position);
+        ELSE
+            INSERT INTO Registered VALUES (NEW.student, NEW.course);
+        END IF;
+
+        RETURN NEW;
+    END;
 $$ LANGUAGE plpgsql;
 
--- REGISTER TRIGGER
-CREATE TRIGGER registerStudent
-INSTEAD OF INSERT ON Registrations
-FOR EACH ROW
-EXECUTE FUNCTION insertInRegistrations();
-
-
-
-/*
-if (waitinglist.contains(student))
-       delete;
-       updatewaitinglist?;
-       return;
-       
-       else
-       if(registered)
-       delete
-       tryTo register firstIn waitinglist
-*/
--- UNREGISTER TRIGGER
+-- Need to use 'INSTEAD OF INSERT'-trigger with function to handle insertion logic into a view.
+CREATE TRIGGER register INSTEAD OF INSERT ON Registrations
+    FOR EACH ROW EXECUTE FUNCTION register();

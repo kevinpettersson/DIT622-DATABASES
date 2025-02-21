@@ -1,5 +1,4 @@
 -- This should be your tables file from part 2
-
 CREATE TABLE Departments (
     name TEXT PRIMARY KEY,
     abbr TEXT NOT NULL,

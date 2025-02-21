@@ -1,8 +1,6 @@
 -- This should be a slightly modified version of inserts.sql
 -- from the previous part (see instructions in the canvas page of the assignment) 
 
--- inte ändrat något från part2 ännu
-
 INSERT INTO Programs VALUES ('Prog1','p1');
 INSERT INTO Programs VALUES ('Prog2','p1'); -- prog1 and prog2 has the same abbrevation
 INSERT INTO Programs VALUES ('Prog3','p3');
@@ -60,15 +58,30 @@ INSERT INTO MandatoryBranch VALUES ('CCC444', 'B1', 'Prog2');
 
 INSERT INTO RecommendedBranch VALUES ('CCC222', 'B1', 'Prog1');
 INSERT INTO RecommendedBranch VALUES ('CCC333', 'B1', 'Prog2');
-
+/*
 INSERT INTO Registered VALUES ('1111111111','CCC111');
 INSERT INTO Registered VALUES ('1111111111','CCC222');
 INSERT INTO Registered VALUES ('2222222222','CCC222');
 INSERT INTO Registered VALUES ('5555555555','CCC222');
+*/
+
 INSERT INTO Registered VALUES ('1111111111','CCC333');
 INSERT INTO Registered VALUES ('2222222222','CCC333');
 INSERT INTO Registered VALUES ('3333333333','CCC333');
 
+INSERT INTO Taken VALUES ('2222222222','CCC111','U');
+INSERT INTO Taken VALUES ('2222222222','CCC222','U');
+INSERT INTO Taken VALUES ('2222222222','CCC444','U');
+INSERT INTO Taken VALUES ('3333333333','CCC111','U');
+INSERT INTO Taken VALUES ('4444444444','CCC111','5');
+INSERT INTO Taken VALUES ('4444444444','CCC222','5');
+INSERT INTO Taken VALUES ('4444444444','CCC333','5');
+INSERT INTO Taken VALUES ('4444444444','CCC444','5');
+INSERT INTO Taken VALUES ('5555555555','CCC111','5');
+INSERT INTO Taken VALUES ('5555555555','CCC222','4');
+INSERT INTO Taken VALUES ('6666666666','CCC111','3');
+
+/*
 INSERT INTO Taken VALUES('2222222222','CCC111','U');
 INSERT INTO Taken VALUES('2222222222','CCC222','U');
 INSERT INTO Taken VALUES('2222222222','CCC444','U');
@@ -85,3 +98,4 @@ INSERT INTO Taken VALUES('6666666666','CCC111','3');
 INSERT INTO WaitingList VALUES('3333333333','CCC222',1);
 INSERT INTO WaitingList VALUES('5555555555','CCC333',1);
 INSERT INTO WaitingList VALUES('6666666666','CCC333',2);
+*/

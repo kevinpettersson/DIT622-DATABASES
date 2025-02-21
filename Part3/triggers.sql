@@ -18,19 +18,12 @@ else
       if (waitinglist.empty && courseNotFull) {register.()}
       else {waitinglist.add()}
 */
-do $$
-BEGIN
-  raise notice 'Hello World!';
-END;
-$$;
-
-
 
 CREATE FUNCTION insertInRegistrations()
 RETURNS TRIGGER AS $$
 BEGIN
-    RAISE EXCEPTION 'this is a test'
-        USING HINT = 'please work';
+    RAISE EXCEPTION 'Unable to register sID % -> course %', NEW.student, NEW.course
+        USING HINT = 'Registration failed';
 END;
 $$ LANGUAGE plpgsql;
 

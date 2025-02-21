@@ -67,7 +67,7 @@ BEGIN
   IF EXISTS ( -- If the course is a limitedcourse
     SELECT 1
     FROM LimitedCourses
-    WHERE course = NEW.course
+    WHERE code = NEW.course
   ) THEN -- check if full
     SELECT capacity INTO courseCapacity
     FROM LimitedCourses 
@@ -75,19 +75,14 @@ BEGIN
   END IF;
     
   
-  IF (
-    maxpos >= courseCapacity
-  ) THEN
-      INSERT INTO Registrations 
-      VALUES (NEW.student, NEW.course, 'waiting');
+  IF (maxpos >= courseCapacity)
+   THEN
+      NEW.status := 'waiting';
       RETURN NEW;
   END IF;
 
-  INSERT INTO Registrations
-    VALUES (NEW.student, NEW.course, 'registered');
-
-
-  -- No conflict -> insert
+ -- No conflict -> insert
+  NEW.STATUS := 'registered';
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;

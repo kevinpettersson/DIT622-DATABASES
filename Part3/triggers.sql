@@ -65,7 +65,7 @@ CREATE FUNCTION register() RETURNS trigger AS $$
         THEN RAISE EXCEPTION 'Failure: Already registered or in waiting list';
         END IF;
 
-        -- CHECK if capacity wasn't null and is less than registrated then insert into R otherwise WL. 
+        -- CHECK if capacity is null (not limited) or is larger than registrated then insert into R otherwise WL. 
         IF course_capacity IS NULL OR course_registrations < course_capacity THEN
             INSERT INTO Registered VALUES (NEW.student, NEW.course);
         ELSE

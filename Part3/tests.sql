@@ -6,7 +6,6 @@
 -- NOTE: Make sure to check that the deletes report the correct
 -- number of affected rows!
 
-
 \echo Testing initial setup
 SELECT course, student, status, position
 FROM Registrations NATURAL LEFT JOIN WaitingList

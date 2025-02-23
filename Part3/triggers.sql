@@ -7,27 +7,26 @@ CREATE FUNCTION register() RETURNS trigger AS $$
         waiting_position INT;
         prerequisite_count INT;
         passed_prerequisite_count INT;
-
     BEGIN
         -- GET the course capacity
-        SELECT lc.capacity INTO course_capacity 
-        FROM LimitedCourses AS lc
-        WHERE lc.code = NEW.course;
+        SELECT capacity INTO course_capacity 
+        FROM LimitedCourses
+        WHERE code = NEW.course;
 
         -- GET the next position in queue
         SELECT COALESCE(MAX(position), 0) + 1 INTO waiting_position
-        FROM WaitingList AS wl 
-        WHERE wl.course = NEW.course;
+        FROM WaitingList 
+        WHERE course = NEW.course;
 
         -- GET number of currently registered students, dummy value if not found.
-        SELECT COUNT(r.student) INTO course_registrations
-        FROM Registered AS r
-        WHERE r.course = NEW.course;
+        SELECT COUNT(student) INTO course_registrations
+        FROM Registered 
+        WHERE course = NEW.course;
 
         -- GET number of prerequisite courses
-        SELECT COUNT(p.prerequisite) INTO prerequisite_count
-        FROM Prerequisites AS p 
-        WHERE p.course = NEW.course;
+        SELECT COUNT(prerequisite) INTO prerequisite_count
+        FROM Prerequisites 
+        WHERE course = NEW.course;
 
         -- GET number of passed prerequisite courses
         SELECT COUNT(t.course) INTO passed_prerequisite_count
@@ -51,8 +50,8 @@ CREATE FUNCTION register() RETURNS trigger AS $$
         -- CHECK if student already passed the course course
         IF EXISTS (
             SELECT 1
-            FROM Taken AS t
-            WHERE t.student = NEW.student AND t.course = NEW.course AND t.grade != 'U'
+            FROM Taken
+            WHERE student = NEW.student AND course = NEW.course AND grade != 'U'
         ) 
         THEN RAISE EXCEPTION 'Failure: Student has passed course';
         END IF;
@@ -60,13 +59,13 @@ CREATE FUNCTION register() RETURNS trigger AS $$
         -- CHECK if student already waiting/registrered for the course.
         IF EXISTS (
             SELECT 1 
-            FROM Registrations AS r
-            WHERE r.course = NEW.course AND r.student = NEW.student 
+            FROM Registrations
+            WHERE course = NEW.course AND student = NEW.student 
         )
         THEN RAISE EXCEPTION 'Failure: Already registered or in waiting list';
         END IF;
 
-        -- CHECK if capacity wasn't null and is less than registrated then insert into WL otherwise R. 
+        -- CHECK if capacity wasn't null and is less than registrated then insert into R otherwise WL. 
         IF course_capacity IS NULL OR course_registrations < course_capacity THEN
             INSERT INTO Registered VALUES (NEW.student, NEW.course);
         ELSE
@@ -84,28 +83,22 @@ CREATE FUNCTION unregister() RETURNS trigger AS $$
         course_registrations INT;
         course_capacity INT;
     BEGIN 
-
-        -- GET next student to enter in waitinglist, used when a student is removed from registrations.
-        SELECT wl.student INTO student_next
-        FROM WaitingList AS wl
-        WHERE wl.course = OLD.course
-        ORDER BY wl.position ASC
+        -- GET next student in WaitingList and their position (can be null).
+        SELECT student, position INTO student_next, student_position
+        FROM WaitingList
+        WHERE course = OLD.course
+        ORDER BY position ASC
         LIMIT 1;
 
-        -- GET the current student position.
-        SELECT position INTO student_position
-        FROM WaitingList
-        WHERE course = OLD.course AND student = OLD.student;
-
-        -- GET number of currently registered students, dummy value if not found.
-        SELECT COUNT(r.student) INTO course_registrations
-        FROM Registered AS r
-        WHERE r.course = NEW.course;
+        -- GET number of currently registered students.
+        SELECT COUNT(student) INTO course_registrations
+        FROM Registered
+        WHERE course = OLD.course;
 
         -- GET the course capacity
-        SELECT lc.capacity INTO course_capacity 
-        FROM LimitedCourses AS lc
-        WHERE lc.code = NEW.course;
+        SELECT capacity INTO course_capacity 
+        FROM LimitedCourses
+        WHERE code = OLD.course;
 
         -- CHECK if student and course are give.
         IF OLD.student IS NULL THEN
@@ -119,52 +112,47 @@ CREATE FUNCTION unregister() RETURNS trigger AS $$
         IF EXISTS (
             SELECT 1 
             FROM WaitingList AS wl 
-            WHERE wl.student = OLD.student AND wl.course = OLD.course
+            WHERE student = OLD.student AND course = OLD.course
         ) THEN 
-            BEGIN
-                -- first delete student from WL
-                DELETE FROM WaitingList 
-                WHERE WaitingList.student = OLD.student AND WaitingList.course = OLD.course;
-                
-                -- then update wl
-                UPDATE WaitingList 
-                SET position = position - 1
-                WHERE course = OLD.course AND position > student_postion;
-            END;
+            -- first delete student from WL
+            DELETE FROM WaitingList 
+            WHERE student = OLD.student AND course = OLD.course;
+            
+            -- then update wl
+            UPDATE WaitingList 
+            SET position = position - 1
+            WHERE course = OLD.course AND position > student_position;
         END IF;
 
         -- CHECK if the student is in registered then remove and update waitinglist.
         IF EXISTS (
             SELECT 1 
-            FROM Registered AS r
-            WHERE r.student = OLD.student AND r.course = OLD.course
+            FROM Registered
+            WHERE student = OLD.student AND course = OLD.course
         ) THEN 
-            BEGIN
-                -- first delete the student from Registered.
-                DELETE FROM Registered 
-                WHERE Registered.student = OLD.student AND Registered.course = OLD.course;
-                
-                -- then if student_next != null, insert next_student into Registered.
-                IF student_next IS NOT NULL AND course_capacity > course_registrations THEN
-                    INSERT INTO Registered (student, course)
-                    SELECT student, course
-                    FROM WaitingList 
-                    WHERE student = student_next AND course = OLD.course;
-                            
-                    -- then delete next_student from WL.
-                    DELETE FROM WaitingList
-                    WHERE student = student_next AND course = OLD.course;
+            -- first delete the student from Registered.
+            DELETE FROM Registered 
+            WHERE student = OLD.student AND course = OLD.course;
+            
+            -- then if student_next != null, insert next_student into Registered.
+            IF student_next IS NOT NULL AND course_capacity >= course_registrations THEN
 
-                    -- then update WL.
-                    UPDATE WaitingList 
-                    SET position = position - 1
-                    WHERE course = OLD.course AND position > student_position;
-                END IF;  
-            END;
+                INSERT INTO Registered VALUES (student_next, OLD.course);
+                        
+                -- then delete next_student from WL.
+                DELETE FROM WaitingList 
+                WHERE student = student_next AND course = OLD.course;
+
+                --then update WL.
+                UPDATE WaitingList 
+                SET position = position - 1
+                WHERE course = OLD.course AND position > student_position;
+            END IF;  
         END IF;
         RETURN OLD;
     END;
 $$ LANGUAGE plpgsql;
+
 
 -- Need to use 'INSTEAD OF INSERT'-trigger with function to handle insertion logic into a view.
 CREATE TRIGGER register INSTEAD OF INSERT ON Registrations

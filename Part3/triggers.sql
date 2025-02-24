@@ -76,13 +76,12 @@ BEGIN
     
   
   IF (maxpos >= courseCapacity)
-   THEN
-      NEW.status := 'waiting';
-      RETURN NEW;
+  THEN
+    INSERT INTO WaitingList VALUES (NEW.student, NEW.course, maxpos+1);
+    ELSE
+    INSERT INTO Registered VALUES (NEW.student, NEW.course);
   END IF;
 
- -- No conflict -> insert
-  NEW.STATUS := 'registered';
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;

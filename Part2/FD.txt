@@ -34,7 +34,7 @@ FD = studentIdnr -> studentName, login, programName, branchName - BCNF VIOLATION
 
 X+ = R2 = {studentIdnr, studentName, login, programName, branchName, programAbbreviation}
 
-R1 - R2 = R3{studentIdnr, courseCode, courseName, credits, departmentName, departmentAbbreviation, capacity, grade, position}
+R1 - R2 = R3{studentIdnr, courseCode, courseName, credits, departmentName, departmentAbbreviation, capacity, grade, position, classification}
 
 ROUND 2:
 FD = programName -> programAbbreviation - BCNF VIOLATION
@@ -43,10 +43,10 @@ R4 = {programName, programAbbreviation}
 R2 - R4 = R5{studentIdnr, studentName, login, programName, branchName}
 
 ROUND 3: 
-FD = course -> courseName, credits, capacity, classification, departmentAbbreviation - BCNF VIOLATION
-R6 = {courseCode, courseName, credits, capacity, classification, departmentAbbreviation, departmentName}
+FD = course -> courseName, credits, capacity, departmentAbbreviation - BCNF VIOLATION
+R6 = {courseCode, courseName, credits, capacity, departmentAbbreviation, departmentName}
 
-R3 - R6 = R7{studentIdnr, courseCode, grade, position}
+R3 - R6 = R7{studentIdnr, courseCode, grade, position, classification}
 
 ROUND 4:
 R4 = {programName, programAbbreviation} is in BCNF
@@ -54,12 +54,12 @@ R4 = {programName, programAbbreviation} is in BCNF
 ROUND 5:
 R5 = {studentIdnr, studentName, login, programName, branchName} is in BCNF
 
-R7 = {studentIdnr, courseCode, grade, position} is in BCNF
+R7 = {studentIdnr, courseCode, grade, position, classification} is in BCNF
 
 ROUND 6:
 FD departmentAbbreviation -> departmentName - BCNF VIOLATION
 R8 = {departmentAbbreviation, departmentName}
-R6 - R8 = R9{courseCode,departmentAbbreviation,courseName,credits,capacity, classification}
+R6 - R8 = R9{courseCode,departmentAbbreviation,courseName,credits,capacity}
 
 SCHEMA:
 
@@ -68,29 +68,29 @@ R4 - Programs(programName, programAbbreviation)
 R5 - Students(studentIdnr, studentName, login, programName, branchName)
     programName -> Programs.programName
 
-R7 - Enrollment(studentIdnr, courseCode, grade, position)
+R7 - Enrollment(studentIdnr, courseCode, grade, position, classification)
     studentIdnr -> Students.studentIdnr
     courseCode -> Courses.courseCode
 
 R8 - Departments(departmentAbbreviation, departmentName)
 
-R9 - Courses(courseCode, departmentAbbreviation, courseName, credits, capacity, classification)
+R9 - Courses(courseCode, departmentAbbreviation, courseName, credits, capacity)
     departmentAbbreviation -> Departments.departmentAbbreviation
+
+
+coursecode class och studentIdnr
 
 -- c) 4NF additions --
 
 MVD identified: #PUT YOUR MVD HERE ON THE FORM a b ->> c d
 
-courseCode ->> classification
+courseCode ->> classification (split on R7)
 
 ADDED: 
-R10 - CourseClassifications(courseCode, classification)
+R10 - CourseClassifications(courseCode, classification) -- course --> studentIdnr
     courseCode -> Courses.courseCode
 
-R11 - Courses(courseCode, departmentAbbreviation, courseName, credits, capacity)
-    departmentAbbreviation -> Departments.departmentAbbreviation
+R11 - Enrollment(studentIdnr, courseCode, grade, position)
 
 REMOVED:
-R9 - Courses(courseCode, departmentAbbreviation, courseName, credits, capacity, classification)
-    departmentAbbreviation -> Departments.departmentAbbreviation
-
+R7 - Enrollment(studentIdnr, courseCode, grade, position, classification) -- classification ska bort

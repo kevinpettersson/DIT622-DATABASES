@@ -6,6 +6,7 @@ Programs(_name_, abbr)
 Students(_idnr_, name, login, program) 
   program → Programs.name
   UNIQUE(login)
+  UNIQUE(idnr, program)
 
 Taken(_student_, _course_, grade) 
   student → Students.idnr
@@ -18,9 +19,8 @@ Registrered(_student_, _course_)
 Branches(_name_, _program_) 
   program → Programs.name
 
-StudentBranches(_student_, _branch_, _program_) 
-  student → Students.idnr
-  program -> Programs.name
+StudentBranches(_student_, branch, program) 
+  student, program → (Students.idnr, Students,program)
   (branch, program) → (Branches.name, Branches.program)
 
 Departments(_name_, abbr)

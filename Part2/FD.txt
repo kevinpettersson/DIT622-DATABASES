@@ -54,7 +54,9 @@ R4 = {programName, programAbbreviation} is in BCNF
 ROUND 5:
 R5 = {studentIdnr, studentName, login, programName, branchName} is in BCNF
 
-R7 = {studentIdnr, courseCode, grade, position, classification} is in BCNF
+R7 ={studentIdnr, courseCode, grade, position, classification} 
+is not in BCNF because {studentIdnr, courseCode} is a candidate key and calssification is not an FD, (studentIdnr, courseCode -> grade, position), but courseCode ->> classification is an MVD
+Needs further decomposition look in part c)
 
 ROUND 6:
 FD departmentAbbreviation -> departmentName - BCNF VIOLATION
@@ -68,17 +70,10 @@ R4 - Programs(programName, programAbbreviation)
 R5 - Students(studentIdnr, studentName, login, programName, branchName)
     programName -> Programs.programName
 
-R7 - Enrollment(studentIdnr, courseCode, grade, position, classification)
-    studentIdnr -> Students.studentIdnr
-    courseCode -> Courses.courseCode
-
 R8 - Departments(departmentAbbreviation, departmentName)
 
 R9 - Courses(courseCode, departmentAbbreviation, courseName, credits, capacity)
     departmentAbbreviation -> Departments.departmentAbbreviation
-
-
-coursecode class och studentIdnr
 
 -- c) 4NF additions --
 
@@ -87,10 +82,10 @@ MVD identified: #PUT YOUR MVD HERE ON THE FORM a b ->> c d
 courseCode ->> classification (split on R7)
 
 ADDED: 
-R10 - CourseClassifications(courseCode, classification) -- course --> studentIdnr
+R10 - CourseClassifications(courseCode, classification) 
     courseCode -> Courses.courseCode
 
 R11 - Enrollment(studentIdnr, courseCode, grade, position)
 
 REMOVED:
-R7 - Enrollment(studentIdnr, courseCode, grade, position, classification) -- classification ska bort
+R7 - Enrollment(studentIdnr, courseCode, grade, position, classification) 

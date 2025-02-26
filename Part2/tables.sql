@@ -1,6 +1,4 @@
--- This will be based on tables.sql from part 1,
--- extended and corrected to match your final schema.
--- This file will contain all your tables
+-- This should be your tables file from part 2
 
 CREATE TABLE Departments (
     name TEXT PRIMARY KEY,
@@ -34,17 +32,17 @@ CREATE TABLE Students (
     login TEXT NOT NULL,
     program TEXT NOT NULL,
     FOREIGN KEY (program) REFERENCES Programs (name),
-    UNIQUE (login),
-    UNIQUE (idnr, program)
+    UNIQUE (login)
 );
 
 CREATE TABLE StudentBranches (
     student CHAR(10),
     branch TEXT,
     program TEXT,
-    FOREIGN KEY (student, program) REFERENCES Students (idnr, program),
+    FOREIGN KEY (student) REFERENCES Students (idnr),
+    FOREIGN KEY (program) REFERENCES Programs (name),
     FOREIGN KEY (branch, program) REFERENCES Branches (name, program),
-    PRIMARY KEY (student)
+    PRIMARY KEY (student, branch, program)
 );
 
 CREATE TABLE Courses (

@@ -60,8 +60,6 @@ public class PortalConnection {
         }else{
           return "{\"success\":false, \"error\":\"student not registrered on course\"}";
         }
-        
-
       } catch (SQLException e) {
         return "{\"success\":false, \"error\":\""+getError(e)+"\"}";
       }
@@ -69,12 +67,43 @@ public class PortalConnection {
 
     // Return a JSON document containing lots of information about a student, it should validate against the schema found in information_schema.json
     public String getInfo(String student) throws SQLException{
-        
-        try(PreparedStatement st = conn.prepareStatement(
-            // replace this with something more useful
-            "SELECT jsonb_build_object('student',idnr,'name',name) AS jsondata FROM BasicInformation WHERE idnr=?"
-            );){
-            
+        // "SELECT jsonb_build_object('student',idnr,'name',name) AS jsondata FROM BasicInformation WHERE idnr=?"
+        try(PreparedStatement st = conn.prepareStatement("SELECT json_build_object(\r\n" + //
+                    "    'student', s.idnr,\r\n" + //
+                    "    'name', s.name, \r\n" + //
+                    "    'login', s.login,\r\n" + //
+                    "    'program', s.program,\r\n" + //
+                    "    'branch', sb.branch,\r\n" + //
+                    "    'finished', \r\n" + //
+                    "        (SELECT json_agg(\r\n" + //
+                    "            json_build_object(\r\n" + //
+                    "                'course', coursename,\r\n" + //
+                    "                'code', course,\r\n" + //
+                    "                'credits', credits,\r\n" + //
+                    "                'grade', grade))\r\n" + //
+                    "        FROM FinishedCourses\r\n" + //
+                    "        WHERE student = s.idnr),\r\n" + //
+                    "    'registered', \r\n" + //
+                    "        (SELECT json_agg(\r\n" + //
+                    "            json_build_object(\r\n" + //
+                    "                'course', c.name,\r\n" + //
+                    "                'code', r.course,\r\n" + //
+                    "                'status', r.status,\r\n" + //
+                    "                'position', wl.position))\r\n" + //
+                    "        FROM Registrations AS r\r\n" + //
+                    "        LEFT JOIN Courses AS c ON r.course = c.code\r\n" + //
+                    "        LEFT JOIN WaitingList AS wl ON r.student = wl.student AND r.course = wl.course\r\n" + //
+                    "        WHERE r.student = s.idnr),\r\n" + //
+                    "    'seminarCourses', ptg.seminarcourses,\r\n" + //
+                    "    'mathCredits', ptg.mathcredits,\r\n" + //
+                    "    'totalCredits', ptg.totalcredits,\r\n" + //
+                    "    'canGraduate', ptg.qualified\r\n" + //
+                    "    ) AS jsondata\r\n" + //
+                    "FROM Students AS s \r\n" + //
+                    "LEFT JOIN StudentBranches AS sb ON sb.student = s.idnr\r\n" + //
+                    "LEFT JOIN PathToGraduation AS ptg ON ptg.student = s.idnr\r\n" + //
+                    "WHERE s.idnr=?;"
+);){
             st.setString(1, student);
             
             ResultSet rs = st.executeQuery();

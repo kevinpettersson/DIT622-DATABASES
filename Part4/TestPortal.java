@@ -11,29 +11,51 @@ public class TestPortal {
    
          // Write your tests here. Add/remove calls to pause() as desired. 
          // Use println instead of prettyPrint to get more compact output (if your raw JSON is already readable)
-         /* 
-         System.out.println(c.unregister("2222222222", "CCC333")); 
+         //1.
+         prettyPrint(c.getInfo("1111111111"));
          pause();
 
-         prettyPrint(c.getInfo("2222222222")); 
+         //2.
+         System.out.println(c.register("1111111111", "CCC111"));
+         prettyPrint(c.getInfo("1111111111"));
          pause();
 
-         System.out.println(c.register("2222222222", "CCC333")); 
+         //3.
+         System.out.println(c.register("1111111111", "CCC111"));
          pause();
 
-         prettyPrint(c.getInfo("2222222222"));
-         */
-        System.out.println("no branch");
-        System.out.println(c.getInfo("1111111111"));//no branch
+         //4.
+         System.out.println(c.unregister("1111111111", "CCC111"));
+         prettyPrint(c.getInfo("1111111111"));
+         System.out.println(c.unregister("1111111111", "CCC111"));
          pause();
 
-         System.out.println("not qualified");
-        System.out.println(c.getInfo("2222222222"));//not qualified
-        pause();
-       
-        System.out.println("qualified");
-        System.out.println(c.getInfo("4444444444")); //qualified
-      
+         //5.
+         System.out.println(c.register("1111111111", "CCC444"));
+         pause();
+
+         /* 6.
+            s4 finished c1,c2,c3,c4                
+            s5 finished c1,c2
+            s6 finished c1
+            s1, s2, s3 registered c3
+            limited courses = (c3, 2), (c2, 1)  */ 
+
+         // register s5 to c3 (waitinglist for c3 position 1) need this to verify waiting students dont get registered when course overfull.
+         System.out.println(c.register("5555555555", "CCC333"));
+         //unreigster s2 from c2
+         System.out.println(c.unregister("2222222222", "CCC333"));
+         pause();
+
+         // 7.
+         System.out.println(c.unregister("5555555555", "CCC333"));
+         System.out.println(c.register("5555555555", "CCC333"));
+         pause();
+
+         // 8.
+         
+
+
       } catch (ClassNotFoundException e) {
          System.err.println("ERROR!\nYou do not have the Postgres JDBC driver (e.g. postgresql-42.5.1.jar) in your runtime classpath!");
       } catch (Exception e) {

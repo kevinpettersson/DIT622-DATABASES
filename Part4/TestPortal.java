@@ -8,7 +8,7 @@ public class TestPortal {
    public static void main(String[] args) {
       try{
          PortalConnection c = new PortalConnection();
-   
+    
          // Write your tests here. Add/remove calls to pause() as desired. 
          // Use println instead of prettyPrint to get more compact output (if your raw JSON is already readable)
          //1.
@@ -33,28 +33,32 @@ public class TestPortal {
          //5.
          System.out.println(c.register("1111111111", "CCC444"));
          pause();
-
          /* 6.
             s4 finished c1,c2,c3,c4                
             s5 finished c1,c2
             s6 finished c1
             s1, s2, s3 registered c3
             limited courses = (c3, 2), (c2, 1)  */ 
-
-         // register s5 to c3 (waitinglist for c3 position 1) need this to verify waiting students dont get registered when course overfull.
-         System.out.println(c.register("5555555555", "CCC333"));
-         //unreigster s2 from c2
-         System.out.println(c.unregister("2222222222", "CCC333"));
+ 
+         System.out.println(c.register("1111111111", "CCC222"));
+         System.out.println(c.register("2222222222", "CCC222"));
+         System.out.println(c.register("3333333333", "CCC222"));
+         System.out.println(c.unregister("1111111111", "CCC222"));
+         System.out.println(c.register("1111111111", "CCC222"));
          pause();
 
          // 7.
-         System.out.println(c.unregister("5555555555", "CCC333"));
-         System.out.println(c.register("5555555555", "CCC333"));
+         System.out.println(c.unregister("1111111111", "CCC222"));
+         System.out.println(c.register("1111111111", "CCC222"));
          pause();
 
          // 8.
-         
+         System.out.println(c.register("5555555555", "CCC333"));
+         System.out.println(c.unregister("2222222222", "CCC333"));
+         pause();
 
+         //9.
+         System.out.println(c.unregister("' OR 1=1", "CCC222' OR 1=1;--"));
 
       } catch (ClassNotFoundException e) {
          System.err.println("ERROR!\nYou do not have the Postgres JDBC driver (e.g. postgresql-42.5.1.jar) in your runtime classpath!");
@@ -62,8 +66,6 @@ public class TestPortal {
          e.printStackTrace();
       }
    }
-   
-   
    
    public static void pause() throws Exception{
      System.out.println("PRESS ENTER");

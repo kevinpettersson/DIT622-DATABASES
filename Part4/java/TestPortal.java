@@ -1,6 +1,3 @@
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class TestPortal {
 
@@ -24,19 +21,17 @@ public class TestPortal {
          pause();
 
          //2 
-         System.out.println("\nTest 2 - Successful register " + c.register("1111111111", "CCC111"));
+         System.out.println("Successful register " + c.register("1111111111", "CCC111"));
          System.out.println((c.getInfo("1111111111")));
          System.out.print("\nTest " + (nextTest++) + " - " );
          pause();
 
          //3
-         System.out.println("\nTest 3");
          System.out.println("Unsuccessful register " + c.register("1111111111", "CCC111"));
          System.out.print("\nTest " + (nextTest++) + " - " );
          pause();
 
          //4
-         System.out.println("\nTest 4");
          System.out.println("Successful unregister " + c.unregister("1111111111", "CCC111"));
          System.out.println((c.getInfo("1111111111")));
          System.out.println("Unsuccessful unregister " + c.unregister("1111111111", "CCC111"));
@@ -44,13 +39,11 @@ public class TestPortal {
          pause();
 
          //5
-         System.out.println("\nTest 5");
          System.out.println("Unsuccessful register " + c.register("1111111111", "CCC444"));
          System.out.print("\nTest " + (nextTest++) + " - " );
          pause();
 
          //6
-         System.out.println("\nTest 6");
          System.out.println("Successful register s1   " + c.register("1111111111", "CCC222"));
          System.out.println("Successful register s2   " + c.register("2222222222", "CCC222"));
          System.out.println("Successful register s3   " + c.register("3333333333", "CCC222"));
@@ -61,7 +54,6 @@ public class TestPortal {
          pause();
 
          //7
-         System.out.println("\nTest 7");
          System.out.println("Successful unregister s1 " + c.unregister("1111111111", "CCC222"));
          System.out.println("Successful register s1   " + c.register("1111111111", "CCC222"));
          System.out.println((c.getInfo("1111111111")));
@@ -69,7 +61,6 @@ public class TestPortal {
          pause();
 
          //8
-         System.out.println("\nTest 8");
 /*
 ### CCC333 capacity is 2
 student    | course |   status
@@ -85,9 +76,9 @@ student    | course |   status
          pause();
 
          //9 - Unregister with the SQL injection you introduced, causing all (or almost all?) registrations to disappear.
-         System.out.println("\nTest 9");
-         System.out.println(c.unregister("' OR 1=1 --", "noobDown"));
+         System.out.println(c.unregister("' OR 1=1", "CCC222' OR 1=1;--"));
 
+         
       } catch (ClassNotFoundException e) {
          System.err.println("ERROR!\nYou do not have the Postgres JDBC driver (e.g. postgresql-42.5.1.jar) in your runtime classpath!");
       } catch (Exception e) {

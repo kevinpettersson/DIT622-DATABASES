@@ -2,5 +2,6 @@
     "java.project.referencedLibraries": [
         "lib/**/*.jar",
         "Part4/java/postgresql-42.7.4.jar"
-    ]
+    ],
+    "java.debug.settings.onBuildFailureProceed": true
 }

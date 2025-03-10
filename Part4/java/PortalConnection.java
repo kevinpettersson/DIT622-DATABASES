@@ -47,23 +47,25 @@ public class PortalConnection {
        }          
     }
 
-    // Unregister a student from a course, returns a tiny JSON document (as a String)
-    public String unregister(String student, String courseCode){
-      try(PreparedStatement ps = conn.prepareStatement(
-        "DELETE FROM Registrations WHERE student=? AND course=?");) {
-          ps.setString(1, student);
-          ps.setString(2, courseCode);
-          int rowsAffected = ps.executeUpdate();
+// Unregister a student from a course, returns a tiny JSON document (as a String)
+public String unregister(String student, String courseCode){
+  // in webapp, write ' OR 1=1;-- for student id, ' OR 1=1;-- for course code then unregister.
+  try(PreparedStatement ps = conn.prepareStatement(
+    "DELETE FROM Registrations WHERE student="+student+" AND course="+courseCode);){
 
-          if (rowsAffected > 0) {
-            return "{\"success\":true}";
-          } else {
-            return "{\"success\":false, \"error\":\"No rows affected\"}";
-          }
-        } catch (SQLException e) {
-          return "{\"success\":false, \"error\":\""+getError(e)+"\"}";
-       }          
+    //ps.setString(1, student);
+    //ps.setString(2, courseCode);
+    int r = ps.executeUpdate();
+
+    if(r > 0){
+      return "{\"success\":true}";
+    }else{
+      return "{\"success\":false, \"error\":\"student not registrered on course\"}";
     }
+  } catch (SQLException e) {
+    return "{\"success\":false, \"error\":\""+getError(e)+"\"}";
+  }
+}
 
     // Return a JSON document containing lots of information about a student, it should validate against the schema found in information_schema.json
     public String getInfo(String student) throws SQLException {

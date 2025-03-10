@@ -66,24 +66,53 @@ public class PortalConnection {
     }
 
     // Return a JSON document containing lots of information about a student, it should validate against the schema found in information_schema.json
-    public String getInfo(String student) throws SQLException{
-        
-        try(PreparedStatement st = conn.prepareStatement(
-            // replace this with something more useful
-            "SELECT jsonb_build_object('student',idnr,'name',name) AS jsondata FROM BasicInformation WHERE idnr=?"
-            );){
-            
-            st.setString(1, student);
-            
-            ResultSet rs = st.executeQuery();
-            
-            if(rs.next())
+    public String getInfo(String student) throws SQLException {
+      String sql = "SELECT jsonb_build_object(" +
+                   "'student', b.idnr," +
+                   "'name', b.name," +
+                   "'login', b.login," +
+                   "'program', b.program," +
+                   "'branch', b.branch," +
+                   "'finished', COALESCE((" +
+                       "SELECT jsonb_agg(jsonb_build_object(" +
+                           "'course', c.name, " +
+                           "'code', c.code, " +
+                           "'credits', c.credits, " +
+                           "'grade', g.grade)) " +
+                       "FROM FinishedCourses g " +
+                       "JOIN Courses c ON g.course = c.code " +
+                       "WHERE g.student = b.idnr), '[]'::jsonb)," +
+                   "'registered', COALESCE((" +
+                       "SELECT jsonb_agg(jsonb_build_object(" +
+                           "'course', c.name, " +
+                           "'code', c.code, " +
+                           "'status', r.status, " +
+                           "'position', COALESCE(w.position, NULL))) " +  // Hämtar position från waitinglist
+                       "FROM Registrations r " +
+                       "LEFT JOIN waitinglist w ON r.student = w.student AND r.course = w.course " + // JOIN mot waitinglist
+                       "JOIN Courses c ON r.course = c.code " +
+                       "WHERE r.student = b.idnr), '[]'::jsonb)," +
+                   "'seminarCourses', COALESCE(pg.seminarCourses, 0)," +
+                   "'mathCredits', COALESCE(pg.mathCredits, 0.0)," +
+                   "'totalCredits', COALESCE(pg.totalCredits, 0.0)," +
+                   "'canGraduate', COALESCE(pg.qualified, false)) AS jsondata " +
+                   "FROM BasicInformation b " +
+                   "LEFT JOIN PathToGraduation pg ON b.idnr = pg.student " +
+                   "WHERE b.idnr = ?;";
+  
+      try (PreparedStatement ps = conn.prepareStatement(sql)) {
+          ps.setString(1, student);
+          ResultSet rs = ps.executeQuery();
+  
+          if (rs.next()) {
               return rs.getString("jsondata");
-            else
-              return "{\"student\":\"does not exist :(\"}"; 
-            
-        } 
-    }
+          } else {
+              return "{\"success\":false, \"error\":\"Student not found\"}";
+          }
+      }
+  }
+  
+  
 
     // This is a hack to turn an SQLException into a JSON string error message. No need to change.
     public static String getError(SQLException e){

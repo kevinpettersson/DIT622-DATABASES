@@ -1,3 +1,7 @@
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class TestPortal {
 
    // enable this to make pretty printing a bit more compact
@@ -6,26 +10,84 @@ public class TestPortal {
    // This class creates a portal connection and runs a few operation
 
    public static void main(String[] args) {
+      int nextTest = 2;
       try{
          PortalConnection c = new PortalConnection();
    
          // Write your tests here. Add/remove calls to pause() as desired. 
          // Use println instead of prettyPrint to get more compact output (if your raw JSON is already readable)
-   
-         System.out.println(c.unregister("2222222222", "CCC333")); 
+
+         //1
+         System.out.println("\nTest 1");
+         System.out.println((c.getInfo("1111111111")));
+         System.out.print("\nTest " + (nextTest++) + " - " );
          pause();
 
-         prettyPrint(c.getInfo("2222222222")); 
+         //2 
+         System.out.println("\nTest 2 - Successful register " + c.register("1111111111", "CCC111"));
+         System.out.println((c.getInfo("1111111111")));
+         System.out.print("\nTest " + (nextTest++) + " - " );
          pause();
 
-         System.out.println(c.register("2222222222", "CCC333")); 
+         //3
+         System.out.println("\nTest 3");
+         System.out.println("Unsuccessful register " + c.register("1111111111", "CCC111"));
+         System.out.print("\nTest " + (nextTest++) + " - " );
          pause();
 
-         prettyPrint(c.getInfo("2222222222"));
+         //4
+         System.out.println("\nTest 4");
+         System.out.println("Successful unregister " + c.unregister("1111111111", "CCC111"));
+         System.out.println((c.getInfo("1111111111")));
+         System.out.println("Unsuccessful unregister " + c.unregister("1111111111", "CCC111"));
+         System.out.print("\nTest " + (nextTest++) + " - " );
+         pause();
 
+         //5
+         System.out.println("\nTest 5");
+         System.out.println("Unsuccessful register " + c.register("1111111111", "CCC444"));
+         System.out.print("\nTest " + (nextTest++) + " - " );
+         pause();
 
+         //6
+         System.out.println("\nTest 6");
+         System.out.println("Successful register s1   " + c.register("1111111111", "CCC222"));
+         System.out.println("Successful register s2   " + c.register("2222222222", "CCC222"));
+         System.out.println("Successful register s3   " + c.register("3333333333", "CCC222"));
+         System.out.println("Successful unregister s1 " + c.unregister("1111111111", "CCC222"));
+         System.out.println("Successful register s1   " + c.register("1111111111", "CCC222"));
+         System.out.println((c.getInfo("1111111111")));
+         System.out.print("\nTest " + (nextTest++) + " - " );
+         pause();
 
-      
+         //7
+         System.out.println("\nTest 7");
+         System.out.println("Successful unregister s1 " + c.unregister("1111111111", "CCC222"));
+         System.out.println("Successful register s1   " + c.register("1111111111", "CCC222"));
+         System.out.println((c.getInfo("1111111111")));
+         System.out.print("\nTest " + (nextTest++) + " - " );
+         pause();
+
+         //8
+         System.out.println("\nTest 8");
+/*
+### CCC333 capacity is 2
+student    | course |   status
+------------+--------+------------
+1111111111 | CCC333 | registered
+2222222222 | CCC333 | registered
+3333333333 | CCC333 | registered
+*/
+         System.out.println("Successful WLregister s5 " + c.register("5555555555", "CCC333"));
+         System.out.println("Successful unregister s1 " + c.unregister("1111111111", "CCC333"));
+         System.out.println((c.getInfo("5555555555")));
+         System.out.print("\nTest " + (nextTest++) + " - " );
+         pause();
+
+         //9 - Unregister with the SQL injection you introduced, causing all (or almost all?) registrations to disappear.
+         System.out.println("\nTest 9");
+         System.out.println(c.unregister("' OR 1=1 --", "noobDown"));
+
       } catch (ClassNotFoundException e) {
          System.err.println("ERROR!\nYou do not have the Postgres JDBC driver (e.g. postgresql-42.5.1.jar) in your runtime classpath!");
       } catch (Exception e) {
